@@ -27,7 +27,9 @@
   .auth-card{width:100%;max-width:420px;background:var(--surface);border-radius:16px;box-shadow:0 24px 60px rgba(8,18,40,.4);overflow:hidden}
   .auth-head{padding:26px 28px 18px;border-bottom:1px solid var(--line);text-align:center}
   .logo-slot{height:46px;display:grid;place-items:center;margin:0 auto 14px;border:1px dashed var(--line-strong);border-radius:8px;color:var(--muted-soft);font-size:11px;letter-spacing:.12em;text-transform:uppercase;max-width:200px}
-  .logo-slot img{max-height:42px;max-width:190px}
+  .logo-slot img{max-height:42px;max-width:190px;display:block}
+  .logo-slot.has-logo{border:0;background:#fff;padding:7px 14px;height:auto;min-height:46px}
+  .side .logo-slot.has-logo{background:#fff;border:0}
   .auth-head h1{font-size:21px;color:var(--navy)}
   .auth-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
   .auth-tabs{display:flex;border-bottom:1px solid var(--line)}
@@ -540,7 +542,7 @@
     var dayName=DAYS[new Date(date+"T00:00:00").getDay()];
     var warns=team.map(function(p){
       var prev=state.entries.reduce(function(s,e){
-        if(e.id===state.editingId||e.date!==date)return s;
+        if(String(e.id)===String(state.editingId)||e.date!==date)return s;
         return teamList(e).indexOf(p)>-1?s+(e.hours||0):s;
       },0);
       var tot=prev+newHours;
@@ -557,7 +559,7 @@
     if(state.view==="cargar")setView("tablero");else renderTable();
   };
   function startEdit(id){
-    var e=state.entries.find(function(x){return x.id===id;});
+    var e=state.entries.find(function(x){return String(x.id)===String(id);});
     if(!e||e.email!==state.user.email)return;
     if(e.weekKey===weekInfo(1).key&&state.week!==1)setWeek(1);else if(e.weekKey===weekInfo(0).key&&state.week!==0)setWeek(0);
     setView("cargar");state.editingId=id;
@@ -566,7 +568,7 @@
     window.scrollTo({top:0,behavior:"smooth"});
   }
   async function removeEntry(id){
-    var e=state.entries.find(function(x){return x.id===id;});
+    var e=state.entries.find(function(x){return String(x.id)===String(id);});
     if(!e||e.email!==state.user.email)return;
     if(!confirm("¿Eliminar la asignación de "+e.client+"?"))return;
     if(sb)await sb.from('asignaciones').delete().eq('id',id);
@@ -670,7 +672,7 @@
 
   var toastEl;
   function showToast(t){if(!toastEl){toastEl=document.createElement("div");toastEl.style.cssText="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(8,18,40,.35);z-index:99;opacity:0;transition:opacity .2s";document.body.appendChild(toastEl);}toastEl.textContent=t;toastEl.style.opacity="1";clearTimeout(toastEl._t);toastEl._t=setTimeout(function(){toastEl.style.opacity="0";},2200);}
-  function applyLogo(){var url=(typeof LOGO_URL!=="undefined"&&LOGO_URL)||window.PBP_LOGO_URL;if(!url)return;["logoSlotAuth","logoSlotApp"].forEach(function(id){var el=$(id);if(el){var img=new Image();img.alt="PBP";img.onload=function(){el.innerHTML="";el.appendChild(img);};img.src=url;}});}
+  function applyLogo(){var url=(typeof LOGO_URL!=="undefined"&&LOGO_URL)||window.PBP_LOGO_URL;if(!url)return;["logoSlotAuth","logoSlotApp"].forEach(function(id){var el=$(id);if(el){var img=new Image();img.alt="PBP";img.onload=function(){el.innerHTML="";el.classList.add("has-logo");el.appendChild(img);};img.src=url;}});}
 
   (async function init(){
     if(!sb){showAuthMsg("Este archivo todavía no tiene tus llaves de Supabase. Ábrelo con un editor y pega tu URL y tu ANON KEY al inicio del script.","info");return;}
