@@ -99,6 +99,19 @@
   .field textarea{resize:vertical;min-height:40px}
   .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--blue-wash);border-color:var(--blue)}
   .field .day{font-size:11px;color:var(--blue);font-weight:600;min-height:13px}
+  .ms{position:relative}
+  .ms-ctrl{border:1px solid var(--line-strong);border-radius:8px;padding:7px 28px 7px 8px;font-size:13.5px;background:#fff;min-height:38px;cursor:pointer;display:flex;flex-wrap:wrap;gap:5px;align-items:center;position:relative}
+  .ms-ctrl:after{content:"▾";position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px}
+  .ms-ctrl.on{outline:2px solid var(--blue-wash);border-color:var(--blue)}
+  .ms-ph{color:var(--muted-soft)}
+  .ms-chip{display:inline-flex;align-items:center;gap:6px;background:var(--blue-wash);border:1px solid #cfe0f8;border-radius:20px;padding:2px 7px 2px 10px;font-size:12px;font-weight:600;color:var(--navy)}
+  .ms-chip button{border:0;background:none;cursor:pointer;color:var(--blue);font-weight:700;font-size:13px;line-height:1;padding:0}
+  .ms-chip button:hover{color:var(--alta)}
+  .ms-pop{position:absolute;z-index:30;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--line-strong);border-radius:9px;box-shadow:var(--shadow);max-height:230px;overflow:auto;padding:5px}
+  .ms-opt{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:7px;cursor:pointer;font-size:13.5px}
+  .ms-opt:hover{background:var(--blue-wash)}
+  .ms-opt input{width:15px;height:15px;accent-color:var(--blue);cursor:pointer}
+  .ms-empty{padding:10px;color:var(--muted);font-size:12.5px}
   .c2{grid-column:span 2}.c3{grid-column:span 3}.c12{grid-column:span 12}.c1{grid-column:span 1}
   .form-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:0 18px 18px}
   .form-actions .ef{margin-right:auto;font-size:12px;color:var(--media);font-weight:600;display:none}
@@ -206,20 +219,20 @@
     <div class="auth-body">
       <div id="authMsg"></div>
       <div id="paneLogin">
-        <div class="f"><label>Correo institucional</label><input id="liEmail" type="email" placeholder="nombre@pbplaw.com" autocomplete="username"></div>
+        <div class="f"><label>Correo institucional</label><input id="liEmail" type="email" placeholder="tucorreo@gmail.com" autocomplete="username"></div>
         <div class="f"><label>Contraseña</label><input id="liPass" type="password" autocomplete="current-password"></div>
         <button class="btn-block" id="btnLogin">Ingresar</button>
         <div class="auth-foot">¿Olvidaste tu clave? <button class="auth-link" id="goRecover">Recupérala</button></div>
       </div>
       <div id="paneRegister" class="hidden">
         <div class="f"><label>Nombre y apellido</label><input id="rgName" type="text" placeholder="Nombre Apellido" autocomplete="name"></div>
-        <div class="f"><label>Correo institucional</label><input id="rgEmail" type="email" placeholder="nombre@pbplaw.com" autocomplete="username"></div>
+        <div class="f"><label>Correo institucional</label><input id="rgEmail" type="email" placeholder="tucorreo@gmail.com" autocomplete="username"></div>
         <div class="f"><label>Contraseña</label><input id="rgPass" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div>
         <button class="btn-block" id="btnRegister">Crear cuenta</button>
         <div class="auth-foot" id="regDomainNote"></div>
       </div>
       <div id="paneRecover" class="hidden">
-        <div class="f"><label>Correo institucional</label><input id="rcEmail" type="email" placeholder="nombre@pbplaw.com"></div>
+        <div class="f"><label>Correo institucional</label><input id="rcEmail" type="email" placeholder="tucorreo@gmail.com"></div>
         <button class="btn-block" id="btnRecover">Enviar enlace de recuperación</button>
         <div class="auth-foot">¿Ya la recordaste? <button class="auth-link" id="backLogin">Ingresar</button></div>
       </div>
@@ -264,7 +277,12 @@
           <div class="field c2"><label>Prioridad</label><select id="fPrio"><option>Alta</option><option selected>Media</option><option>Baja</option></select></div>
           <div class="field c2"><label>Complejidad</label><select id="fComp"><option>Alta</option><option selected>Media</option><option>Baja</option></select></div>
           <div class="field c3"><label>Cliente</label><select id="fClient"></select></div>
-          <div class="field c3"><label>Equipo a trabajar</label><select id="fTeam"></select></div>
+          <div class="field c3"><label>Equipo a trabajar</label>
+            <div class="ms" id="fTeamMs">
+              <div class="ms-ctrl" id="fTeamCtrl"></div>
+              <div class="ms-pop hidden" id="fTeamPop"></div>
+            </div>
+          </div>
           <div class="field c1"><label>Horas</label><input id="fHours" type="number" min="0" step="0.5" placeholder="0"></div>
           <div class="field c2"><label>Tipo de hora</label><select id="fType"><option>Facturable</option><option>No facturable</option><option>Administrativa</option><option>Capacitación</option><option>Pro bono</option></select></div>
           <div class="field c12"><label>Descripción de la actividad</label><textarea id="fDesc" placeholder="Detalle de lo que vas a trabajar…"></textarea></div>
@@ -319,7 +337,7 @@
       <div class="card"><div class="card-head"><h3>Equipo a trabajar</h3><span class="hint">se llena solo con los usuarios registrados</span></div>
         <div class="listmgr"><div class="banner info" style="margin:0"><span class="d"></span><span>El dropdown de <b>Equipo a trabajar</b> usa automáticamente los nombres de los usuarios registrados. Para agregar a alguien, esa persona crea su cuenta; aparecerá al instante en la lista.</span></div></div></div>
       <div class="card"><div class="card-head"><h3>Dominio institucional permitido</h3><span class="hint">solo correos de este dominio pueden registrarse</span></div>
-        <div class="listmgr"><div class="add"><input id="domainInput" placeholder="pbplaw.com"><button class="btn primary sm" id="saveDomain">Guardar</button></div></div></div>
+        <div class="listmgr"><div class="add"><input id="domainInput" placeholder="(vacío = cualquier correo, para pruebas)"><button class="btn primary sm" id="saveDomain">Guardar</button></div></div></div>
       <div class="card"><div class="card-head"><h3>Usuarios registrados</h3></div><div id="userList"></div></div>
     </section>
   </main>
@@ -335,6 +353,22 @@
      ============================================================ */
   const SUPABASE_URL      = "https://yeffpsoqijdyfqdcqekv.supabase.co";        // <-- tu Project URL
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllZmZwc29xaWpkeWZxZGNxZWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4OTU2NTYsImV4cCI6MjA5NzQ3MTY1Nn0.DyFF4hMf5H-CQ2zQdk2m11l0OD0cc13KRIeS-f5sxc0";   // <-- tu anon public key
+
+  /* ============================================================
+     CONTROL DE DOMINIO
+     Mientras pruebas:  ENFORCE_DOMAIN = false  (acepta cualquier correo)
+     En producción:     ENFORCE_DOMAIN = true   (solo el dominio de Admin)
+     ============================================================ */
+  const ENFORCE_DOMAIN = false;
+
+  /* ============================================================
+     LOGO  —  pega aquí la ruta o URL de tu logo
+     · Si el logo está en el MISMO repositorio que este index.html,
+       basta el nombre del archivo, ej: "logo.png"
+     · Si lo abres desde otro lado, usa la URL RAW de GitHub, ej:
+       "https://raw.githubusercontent.com/usuario/repo/main/logo.png"
+     ============================================================ */
+  const LOGO_URL = "logo.png";
 
   var sb=null;
   try{ if(window.supabase&&window.supabase.createClient){ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY); } }catch(e){}
@@ -352,6 +386,7 @@
   function initials(n){if(!n)return "?";var p=n.trim().split(/\s+/);return ((p[0]||"")[0]||"").toUpperCase()+((p[1]||"")[0]||"").toUpperCase();}
   function esc(s){return (s==null?"":String(s)).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
   function nfmt(n){return (Math.round(n*100)/100).toLocaleString("es-EC");}
+  function teamList(e){return String(e&&e.team||"").split(",").map(function(s){return s.trim();}).filter(Boolean);}
 
   var state={user:null,week:0,view:"cargar",filterMine:false,editingId:null,entries:[],clients:[],domain:"",users:[]};
   var $=function(id){return document.getElementById(id);};
@@ -395,6 +430,7 @@
     var name=$("rgName").value.trim(),email=$("rgEmail").value.trim().toLowerCase(),pass=$("rgPass").value;
     if(!name)return showAuthMsg("Escribe tu nombre.","err");
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return showAuthMsg("Correo no válido.","err");
+    if(ENFORCE_DOMAIN&&state.domain&&email.split("@")[1]!==state.domain.toLowerCase())return showAuthMsg("Solo se permiten correos del dominio @"+state.domain+".","err");
     if(pass.length<6)return showAuthMsg("La contraseña debe tener al menos 6 caracteres.","err");
     if(!sb)return showAuthMsg("Falta configurar las llaves de Supabase en el archivo.","err");
     var res=await sb.auth.signUp({email:email,password:pass,options:{data:{nombre:name}}});
@@ -472,22 +508,47 @@
     function fill(sel,arr,ph){sel.innerHTML="<option value=''>"+ph+"</option>"+arr.map(function(x){return "<option>"+esc(x)+"</option>";}).join("");}
     fill($("fClient"),state.clients,"— Elige cliente —");
     var names=state.users.map(function(u){return u.name;}).filter(Boolean).sort(function(a,b){return a.localeCompare(b,'es');});
-    fill($("fTeam"),names,"— Elige persona —");
+    var keep=getTeam();
+    var pop=$("fTeamPop");
+    pop.innerHTML=names.length?names.map(function(n){return '<label class="ms-opt"><input type="checkbox" value="'+esc(n)+'"><span>'+esc(n)+'</span></label>';}).join(""):'<div class="ms-empty">Aún no hay personas registradas.</div>';
+    Array.prototype.forEach.call(pop.querySelectorAll("input"),function(c){c.checked=keep.indexOf(c.value)>-1;c.onchange=renderTeamChips;});
+    renderTeamChips();
   }
+  function getTeam(){return Array.prototype.map.call($("fTeamPop").querySelectorAll("input:checked"),function(c){return c.value;});}
+  function setTeam(arr){arr=arr||[];Array.prototype.forEach.call($("fTeamPop").querySelectorAll("input"),function(c){c.checked=arr.indexOf(c.value)>-1;});renderTeamChips();}
+  function renderTeamChips(){
+    var sel=getTeam(),ctrl=$("fTeamCtrl");
+    ctrl.innerHTML=sel.length?sel.map(function(n){return '<span class="ms-chip">'+esc(n)+'<button type="button" data-rm="'+esc(n)+'">×</button></span>';}).join(""):'<span class="ms-ph">— Elige una o más personas —</span>';
+    Array.prototype.forEach.call(ctrl.querySelectorAll("[data-rm]"),function(b){b.onclick=function(ev){ev.stopPropagation();var n=b.getAttribute("data-rm");var box=Array.prototype.filter.call($("fTeamPop").querySelectorAll("input"),function(c){return c.value===n;})[0];if(box)box.checked=false;renderTeamChips();};});
+  }
+  function closeTeamPop(){$("fTeamPop").classList.add("hidden");$("fTeamCtrl").classList.remove("on");}
+  $("fTeamCtrl").onclick=function(){var p=$("fTeamPop");var open=p.classList.contains("hidden");p.classList.toggle("hidden",!open);$("fTeamCtrl").classList.toggle("on",open);};
+  document.addEventListener("click",function(e){if(!$("fTeamMs").contains(e.target))closeTeamPop();});
   function constrainDate(){var wi=weekInfo(state.week);var f=$("fDate");f.min=iso(wi.monday);f.max=iso(wi.sunday);if(!f.value||f.value<f.min||f.value>f.max){var t=iso(new Date());f.value=(t>=f.min&&t<=f.max)?t:f.min;}paintDay();}
   function paintDay(){var f=$("fDate");if(!f.value){$("fDay").textContent="";return;}var d=new Date(f.value+"T00:00:00");$("fDay").textContent=DAYS[d.getDay()];}
   $("fDate").oninput=paintDay;
 
-  function resetForm(){state.editingId=null;$("fPrio").value="Media";$("fComp").value="Media";$("fClient").value="";$("fTeam").value="";$("fHours").value="";$("fType").value="Facturable";$("fDesc").value="";constrainDate();$("btnSave").textContent="Cargar asignación";$("btnCancel").classList.add("hidden");$("editFlag").style.display="none";}
+  function resetForm(){state.editingId=null;$("fPrio").value="Media";$("fComp").value="Media";$("fClient").value="";setTeam([]);closeTeamPop();$("fHours").value="";$("fType").value="Facturable";$("fDesc").value="";constrainDate();$("btnSave").textContent="Cargar asignación";$("btnCancel").classList.add("hidden");$("editFlag").style.display="none";}
   $("btnCancel").onclick=resetForm;
   function flash(el){el.style.borderColor="var(--alta)";setTimeout(function(){el.style.borderColor="";},900);}
   $("btnSave").onclick=async function(){
     if(isLocked())return;
-    var cli=$("fClient").value,team=$("fTeam").value,desc=$("fDesc").value.trim(),date=$("fDate").value;
-    if(!cli)return flash($("fClient"));if(!team)return flash($("fTeam"));if(!desc)return flash($("fDesc"));
+    var cli=$("fClient").value,team=getTeam(),desc=$("fDesc").value.trim(),date=$("fDate").value;
+    if(!cli)return flash($("fClient"));if(!team.length)return flash($("fTeamCtrl"));if(!desc)return flash($("fDesc"));
     if(!sb)return showToast("Falta configurar Supabase.");
+    var newHours=parseFloat($("fHours").value)||0;
+    var dayName=DAYS[new Date(date+"T00:00:00").getDay()];
+    var warns=team.map(function(p){
+      var prev=state.entries.reduce(function(s,e){
+        if(e.id===state.editingId||e.date!==date)return s;
+        return teamList(e).indexOf(p)>-1?s+(e.hours||0):s;
+      },0);
+      var tot=prev+newHours;
+      return tot>8?(esc(p)+" quedaría con "+nfmt(tot)+" h el "+dayName+" ("+nfmt(prev)+" h ya cargadas + "+nfmt(newHours)+" h nuevas)"):null;
+    }).filter(Boolean);
+    if(warns.length&&!confirm("⚠ Supera las 8 h/día:\n\n"+warns.join("\n")+"\n\n¿Cargar la asignación de todos modos?"))return;
     var wi=weekInfo(state.week);
-    var payload={usuario_id:state.user.id,usuario_nombre:state.user.name,usuario_email:state.user.email,semana:wi.key,fecha:date,prioridad:$("fPrio").value,complejidad:$("fComp").value,cliente:cli,equipo:team,descripcion:desc,horas:parseFloat($("fHours").value)||0,tipo_hora:$("fType").value,actualizado_en:new Date().toISOString()};
+    var payload={usuario_id:state.user.id,usuario_nombre:state.user.name,usuario_email:state.user.email,semana:wi.key,fecha:date,prioridad:$("fPrio").value,complejidad:$("fComp").value,cliente:cli,equipo:team.join(", "),descripcion:desc,horas:parseFloat($("fHours").value)||0,tipo_hora:$("fType").value,actualizado_en:new Date().toISOString()};
     $("btnSave").disabled=true;$("btnSave").textContent="Guardando…";
     var resp=state.editingId?await sb.from('asignaciones').update(payload).eq('id',state.editingId):await sb.from('asignaciones').insert(payload);
     $("btnSave").disabled=false;
@@ -500,7 +561,7 @@
     if(!e||e.email!==state.user.email)return;
     if(e.weekKey===weekInfo(1).key&&state.week!==1)setWeek(1);else if(e.weekKey===weekInfo(0).key&&state.week!==0)setWeek(0);
     setView("cargar");state.editingId=id;
-    $("fDate").value=e.date;$("fPrio").value=e.priority;$("fComp").value=e.complexity||"Media";$("fClient").value=e.client;$("fTeam").value=e.team;$("fHours").value=e.hours||"";$("fType").value=e.hourType;$("fDesc").value=e.description;
+    $("fDate").value=e.date;$("fPrio").value=e.priority;$("fComp").value=e.complexity||"Media";$("fClient").value=e.client;setTeam(teamList(e));$("fHours").value=e.hours||"";$("fType").value=e.hourType;$("fDesc").value=e.description;
     paintDay();$("btnSave").textContent="Guardar cambios";$("btnCancel").classList.remove("hidden");$("editFlag").style.display="inline";
     window.scrollTo({top:0,behavior:"smooth"});
   }
@@ -552,9 +613,9 @@
     var list=weekEntries();
     var total=list.reduce(function(s,e){return s+(e.hours||0);},0);
     var bill=list.filter(function(e){return e.hourType==="Facturable";}).reduce(function(s,e){return s+(e.hours||0);},0);
-    var ppl={};list.forEach(function(e){if(e.team)ppl[e.team]=true;});
+    var ppl={};list.forEach(function(e){teamList(e).forEach(function(n){ppl[n]=true;});});
     $("repKpis").innerHTML=kpi("Horas del equipo",nfmt(total),"h")+kpi("Horas facturables",nfmt(bill),"h")+kpi("Asignaciones",list.length,"")+kpi("Personas asignadas",Object.keys(ppl).length,"");
-    var byP={};list.forEach(function(e){var k=e.team||"— Sin asignar —";if(!byP[k])byP[k]={h:0,idx:0,cx:0};byP[k].h+=e.hours||0;byP[k].idx+=(e.hours||0)*(CW[e.complexity]||2);if(e.complexity==="Alta")byP[k].cx++;});
+    var byP={};list.forEach(function(e){var ns=teamList(e);if(!ns.length)ns=["— Sin asignar —"];ns.forEach(function(k){if(!byP[k])byP[k]={h:0,idx:0,cx:0};byP[k].h+=e.hours||0;byP[k].idx+=(e.hours||0)*(CW[e.complexity]||2);if(e.complexity==="Alta")byP[k].cx++;});});
     var arrH=Object.keys(byP).map(function(n){return {n:n,v:byP[n].h};}).sort(function(a,b){return b.v-a.v;});
     var maxH=Math.max.apply(null,arrH.map(function(x){return x.v;}).concat([1]));
     $("repPeople").innerHTML=arrH.length?arrH.map(function(x){return bar(x.n,Math.round(x.v/maxH*100),nfmt(x.v)+'<small> h</small>');}).join(""):none();
@@ -609,11 +670,12 @@
 
   var toastEl;
   function showToast(t){if(!toastEl){toastEl=document.createElement("div");toastEl.style.cssText="position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(8,18,40,.35);z-index:99;opacity:0;transition:opacity .2s";document.body.appendChild(toastEl);}toastEl.textContent=t;toastEl.style.opacity="1";clearTimeout(toastEl._t);toastEl._t=setTimeout(function(){toastEl.style.opacity="0";},2200);}
-  function applyLogo(){if(!window.PBP_LOGO_URL)return;["logoSlotAuth","logoSlotApp"].forEach(function(id){var el=$(id);if(el)el.innerHTML='<img src="'+window.PBP_LOGO_URL+'" alt="PBP">';});}
+  function applyLogo(){var url=(typeof LOGO_URL!=="undefined"&&LOGO_URL)||window.PBP_LOGO_URL;if(!url)return;["logoSlotAuth","logoSlotApp"].forEach(function(id){var el=$(id);if(el){var img=new Image();img.alt="PBP";img.onload=function(){el.innerHTML="";el.appendChild(img);};img.src=url;}});}
 
   (async function init(){
     if(!sb){showAuthMsg("Este archivo todavía no tiene tus llaves de Supabase. Ábrelo con un editor y pega tu URL y tu ANON KEY al inicio del script.","info");return;}
-    $("regDomainNote").textContent="Usa tu correo institucional";
+    try{var rd=await sb.from('config').select('valor').eq('clave','dominio').maybeSingle();state.domain=(rd.data&&rd.data.valor)?rd.data.valor:"";}catch(e){}
+    $("regDomainNote").textContent=ENFORCE_DOMAIN&&state.domain?("Usa tu correo @"+state.domain):"Pruebas: se acepta cualquier correo";
     applyLogo();
     if(location.hash.indexOf("type=recovery")>-1){
       var np=prompt("Ingresa tu nueva contraseña (mínimo 6 caracteres):");
